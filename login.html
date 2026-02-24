@@ -6,60 +6,14 @@
 <title>Login - GENZ FOOD</title>
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Arial, sans-serif;
-}
-
-body{
-  background:#0f0f0f;
-  color:#fff;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-}
-
-.login-box{
-  background:#1a1a1a;
-  padding:30px;
-  width:300px;
-  border-radius:10px;
-  text-align:center;
-}
-
-.login-box h2{
-  margin-bottom:20px;
-}
-
-.login-box input{
-  width:100%;
-  padding:10px;
-  margin:10px 0;
-  border:none;
-  border-radius:6px;
-}
-
-.login-box button{
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  border:none;
-  border-radius:6px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.email-btn{
-  background:orange;
-}
-
-.google-btn{
-  background:#db4437;
-  color:white;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
+body{background:#0f0f0f;color:#fff;display:flex;justify-content:center;align-items:center;height:100vh;}
+.login-box{background:#1a1a1a;padding:30px;width:300px;border-radius:10px;text-align:center;}
+.login-box h2{margin-bottom:20px;}
+.login-box input{width:100%;padding:10px;margin:10px 0;border:none;border-radius:6px;}
+.login-box button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:6px;font-weight:bold;cursor:pointer;}
+.email-btn{background:orange;}
+.google-btn{background:#db4437;color:white;}
 </style>
 </head>
 
@@ -67,10 +21,8 @@ body{
 
 <div class="login-box">
   <h2>Login</h2>
-
   <input type="email" id="email" placeholder="Enter Email">
   <input type="password" id="password" placeholder="Enter Password">
-
   <button class="email-btn" id="emailLogin">Login / Sign Up</button>
   <button class="google-btn" id="googleLogin">Login with Google</button>
 </div>
@@ -87,6 +39,12 @@ import {
   sendEmailVerification
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
+import { 
+  getFirestore,
+  doc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyAY3G265zTP5Qpf9EoGlGy2sSrVYGI4LGk",
   authDomain: "genzfood2-96e43.firebaseapp.com",
@@ -98,55 +56,69 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
 // Google Login
-document.getElementById("googleLogin").addEventListener("click", () => {
-  signInWithPopup(auth, provider)
-    .then(() => {
-      alert("Google Login Successful");
-      window.location.href = "index.html";
-    })
-    .catch((error) => {
-      alert(error.message);
+document.getElementById("googleLogin").addEventListener("click", async () => {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+
+    // Save user to Firestore
+    await setDoc(doc(db, "users", user.uid), {
+      name: user.displayName,
+      email: user.email,
+      createdAt: new Date()
     });
+
+    alert("Google Login Successful");
+    window.location.href = "index.html";
+
+  } catch (error) {
+    alert(error.message);
+  }
 });
 
 // Email Login / Signup
-document.getElementById("emailLogin").addEventListener("click", () => {
+document.getElementById("emailLogin").addEventListener("click", async () => {
 
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
-  signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
-      if (userCredential.user.emailVerified) {
-        alert("Login Successful");
-        window.location.href = "index.html";
-      } else {
-        alert("Please verify your email first.");
-      }
+    if (userCredential.user.emailVerified) {
+      alert("Login Successful");
+      window.location.href = "index.html";
+    } else {
+      alert("Please verify your email first.");
+    }
 
-    })
-    .catch(() => {
+  } catch {
 
-      // If user not found → create account
-      createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
+    // Create new account
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
-          const user = userCredential.user;
+      // Save to Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        name: email,
+        email: email,
+        createdAt: new Date()
+      });
 
-          sendEmailVerification(user).then(() => {
-            alert("Account created. Verification email sent. Please check your email.");
-          });
+      await sendEmailVerification(user);
 
-        })
-        .catch((error) => {
-          alert(error.message);
-        });
+      alert("Account created. Verification email sent.");
 
-    });
+    } catch (error) {
+      alert(error.message);
+    }
+
+  }
 
 });
 
