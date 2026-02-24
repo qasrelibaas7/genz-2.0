@@ -26,8 +26,32 @@ body{
   color:orange;
 }
 
+.nav-buttons button{
+  margin-left:10px;
+  padding:8px 15px;
+  border:none;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+.profile-btn{
+  background:orange;
+}
+
+.logout-btn{
+  background:red;
+  color:white;
+}
+
 .container{
-  margin-top:100px;
+  margin-top:120px;
+}
+
+.card{
+  background:#1a1a1a;
+  padding:30px;
+  border-radius:10px;
+  display:inline-block;
 }
 </style>
 </head>
@@ -36,12 +60,21 @@ body{
 
 <nav class="navbar">
   <div class="logo">GENZ <span>FOOD</span></div>
-  <button onclick="location.href='index.html'">Home</button>
+  <div class="nav-buttons">
+    <button class="profile-btn" onclick="location.href='profile.html'">
+      Profile
+    </button>
+    <button class="logout-btn" id="logoutBtn">
+      Logout
+    </button>
+  </div>
 </nav>
 
 <div class="container">
-  <h1 id="welcomeText"></h1>
-  <p>Your startup dashboard is secure 🔐</p>
+  <div class="card">
+    <h1 id="welcomeText"></h1>
+    <p>Your startup dashboard is secure 🔐</p>
+  </div>
 </div>
 
 <script type="module">
@@ -49,7 +82,8 @@ body{
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { 
   getAuth,
-  onAuthStateChanged
+  onAuthStateChanged,
+  signOut
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -65,13 +99,21 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 onAuthStateChanged(auth, (user) => {
+
   if (user) {
     document.getElementById("welcomeText").innerText =
-      "Welcome, " + user.displayName;
+      "Welcome, " + (user.displayName || user.email);
   } else {
-    // Not logged in → redirect
     window.location.href = "login.html";
   }
+
+});
+
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  signOut(auth).then(() => {
+    alert("Logged Out");
+    window.location.href = "index.html";
+  });
 });
 
 </script>
