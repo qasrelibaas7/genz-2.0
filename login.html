@@ -68,12 +68,76 @@ body{
 <div class="login-box">
   <h2>Login</h2>
 
-  <input type="email" placeholder="Enter Email">
-  <input type="password" placeholder="Enter Password">
+  <input type="email" id="email" placeholder="Enter Email">
+  <input type="password" id="password" placeholder="Enter Password">
 
-  <button class="email-btn">Login with Email</button>
-  <button class="google-btn">Login with Google</button>
+  <button class="email-btn" id="emailLogin">Login with Email</button>
+  <button class="google-btn" id="googleLogin">Login with Google</button>
 </div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { 
+  getAuth, 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAY3G265zTP5Qpf9EoGlGy2sSrVYGI4LGk",
+  authDomain: "genzfood2-96e43.firebaseapp.com",
+  projectId: "genzfood2-96e43",
+  storageBucket: "genzfood2-96e43.firebasestorage.app",
+  messagingSenderId: "410241064931",
+  appId: "1:410241064931:web:ab1454346c3d28bba30ad6"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+const provider = new GoogleAuthProvider();
+
+// Google Login
+document.getElementById("googleLogin").addEventListener("click", () => {
+  signInWithPopup(auth, provider)
+    .then((result) => {
+      alert("Google Login Successful");
+      window.location.href = "index.html";
+    })
+    .catch((error) => {
+      alert(error.message);
+    });
+});
+
+// Email Login / Signup
+document.getElementById("emailLogin").addEventListener("click", () => {
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      alert("Login Successful");
+      window.location.href = "index.html";
+    })
+    .catch(() => {
+      // If user not found → create account
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          alert("Account Created & Logged In");
+          window.location.href = "index.html";
+        })
+        .catch((error) => {
+          alert(error.message);
+        });
+    });
+
+});
+
+</script>
 
 </body>
 </html>
