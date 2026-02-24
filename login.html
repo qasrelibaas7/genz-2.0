@@ -71,7 +71,7 @@ body{
   <input type="email" id="email" placeholder="Enter Email">
   <input type="password" id="password" placeholder="Enter Password">
 
-  <button class="email-btn" id="emailLogin">Login with Email</button>
+  <button class="email-btn" id="emailLogin">Login / Sign Up</button>
   <button class="google-btn" id="googleLogin">Login with Google</button>
 </div>
 
@@ -83,7 +83,8 @@ import {
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
-  signInWithPopup
+  signInWithPopup,
+  sendEmailVerification
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -97,13 +98,12 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-
 const provider = new GoogleAuthProvider();
 
 // Google Login
 document.getElementById("googleLogin").addEventListener("click", () => {
   signInWithPopup(auth, provider)
-    .then((result) => {
+    .then(() => {
       alert("Google Login Successful");
       window.location.href = "index.html";
     })
@@ -120,19 +120,32 @@ document.getElementById("emailLogin").addEventListener("click", () => {
 
   signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
-      alert("Login Successful");
-      window.location.href = "index.html";
+
+      if (userCredential.user.emailVerified) {
+        alert("Login Successful");
+        window.location.href = "index.html";
+      } else {
+        alert("Please verify your email first.");
+      }
+
     })
     .catch(() => {
+
       // If user not found → create account
       createUserWithEmailAndPassword(auth, email, password)
-        .then(() => {
-          alert("Account Created & Logged In");
-          window.location.href = "index.html";
+        .then((userCredential) => {
+
+          const user = userCredential.user;
+
+          sendEmailVerification(user).then(() => {
+            alert("Account created. Verification email sent. Please check your email.");
+          });
+
         })
         .catch((error) => {
           alert(error.message);
         });
+
     });
 
 });
