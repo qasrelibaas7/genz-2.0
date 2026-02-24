@@ -3,141 +3,65 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GENZ FOOD 2.0</title>
-
-<style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Arial, sans-serif;
-}
-
-body{
-  background:#0f0f0f;
-  color:#fff;
-}
-
-.navbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:15px 25px;
-  background:#000;
-}
-
-.logo{
-  font-size:20px;
-  font-weight:bold;
-}
-
-.logo span{
-  color:orange;
-}
-
-.hero{
-  height:90vh;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  text-align:center;
-}
-
-.hero h1{
-  font-size:32px;
-}
-
-.hero span{
-  color:orange;
-}
-
-.hero p{
-  margin-top:10px;
-  opacity:.7;
-}
-
-.hero button{
-  margin-top:25px;
-  padding:12px 25px;
-  background:orange;
-  border:none;
-  font-weight:bold;
-  cursor:pointer;
-  border-radius:6px;
-}
-
-.hero button:hover{
-  opacity:.8;
-}
-</style>
+<title>GENZ FOOD AJARA</title>
+<link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
 
-<nav class="navbar">
-  <div class="logo">GENZ <span>FOOD</span></div>
-</nav>
+<header class="navbar">
+  <div class="logo">GENZ FOOD</div>
+  <div class="location">Ajara, Maharashtra</div>
+  <div class="nav-icons">
+    <span>👤</span>
+    <span>🛒 <span id="cartCount">0</span></span>
+  </div>
+</header>
 
 <section class="hero">
-  <h1>Welcome to <span>GENZ FOOD</span></h1>
-  <p>Startup Mode Activated 🚀</p>
-  <button onclick="location.href='login.html'">Get Started</button>
-  <button onclick="location.href='dashboard.html'">Go to Dashboard</button>
+  <h1 class="hero-title">GENZ FOOD AJARA</h1>
+  <p>Delivering happiness at your doorstep</p>
+  <button class="order-btn">Order Now</button>
 </section>
 
-<script type="module">
+<section class="search-section">
+  <input type="text" placeholder="Search dishes or restaurants...">
+</section>
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { 
-  getAuth,
-  onAuthStateChanged,
-  signOut
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+<section class="categories">
+  <h2>Categories</h2>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAY3G265zTP5Qpf9EoGlGy2sSrVYGI4LGk",
-  authDomain: "genzfood2-96e43.firebaseapp.com",
-  projectId: "genzfood2-96e43",
-  storageBucket: "genzfood2-96e43.firebasestorage.app",
-  messagingSenderId: "410241064931",
-  appId: "1:410241064931:web:ab1454346c3d28bba30ad6"
-};
+  <div class="category-card">
+    <img src="images/umer1.jpg">
+    <span>Pizza</span>
+  </div>
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+  <div class="category-card">
+    <img src="images/umer2.jpg">
+    <span>Burger</span>
+  </div>
 
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    const navbar = document.querySelector(".navbar");
+</section>
 
-    const nameTag = document.createElement("span");
-    nameTag.innerText = "Hi, " + user.displayName;
-    nameTag.style.marginLeft = "15px";
-    nameTag.style.color = "orange";
+<section class="restaurants">
+  <h2>Nearby Restaurants</h2>
 
-    const logoutBtn = document.createElement("button");
-    logoutBtn.innerText = "Logout";
-    logoutBtn.style.marginLeft = "15px";
-    logoutBtn.style.padding = "8px 15px";
-    logoutBtn.style.background = "red";
-    logoutBtn.style.border = "none";
-    logoutBtn.style.color = "white";
-    logoutBtn.style.cursor = "pointer";
+  <div class="restaurant-slider">
+    <div class="restaurant-card">
+      <img src="images/umer3.jpg">
+      <h3>Ajara Spice Hub</h3>
+      <p>Pizza • Burger • Pasta</p>
+    </div>
+  </div>
 
-    logoutBtn.onclick = () => {
-      signOut(auth).then(() => {
-        alert("Logged Out");
-        location.reload();
-      });
-    };
+</section>
 
-    navbar.appendChild(nameTag);
-    navbar.appendChild(logoutBtn);
-  }
-});
+<footer class="footer">
+  <h3>GENZ FOOD</h3>
+  <a href="#">About Us</a>
+  <a href="#">Contact Us</a>
+  <a href="#">Privacy Policy</a>
+</footer>
 
-</script>
-
+<script src="js/app.js"></script>
 </body>
 </html>
