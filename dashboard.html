@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - GENZ FOOD</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#0f0f0f;
+  color:white;
+  text-align:center;
+}
+
+.navbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 25px;
+  background:#000;
+}
+
+.logo span{
+  color:orange;
+}
+
+.container{
+  margin-top:100px;
+}
+</style>
+</head>
+
+<body>
+
+<nav class="navbar">
+  <div class="logo">GENZ <span>FOOD</span></div>
+  <button onclick="location.href='index.html'">Home</button>
+</nav>
+
+<div class="container">
+  <h1 id="welcomeText"></h1>
+  <p>Your startup dashboard is secure 🔐</p>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { 
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAY3G265zTP5Qpf9EoGlGy2sSrVYGI4LGk",
+  authDomain: "genzfood2-96e43.firebaseapp.com",
+  projectId: "genzfood2-96e43",
+  storageBucket: "genzfood2-96e43.firebasestorage.app",
+  messagingSenderId: "410241064931",
+  appId: "1:410241064931:web:ab1454346c3d28bba30ad6"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    document.getElementById("welcomeText").innerText =
+      "Welcome, " + user.displayName;
+  } else {
+    // Not logged in → redirect
+    window.location.href = "login.html";
+  }
+});
+
+</script>
+
+</body>
+</html>
