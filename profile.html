@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile - GENZ FOOD</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#0f0f0f;
+  color:white;
+  text-align:center;
+}
+
+.navbar{
+  padding:15px;
+  background:black;
+}
+
+.container{
+  margin-top:100px;
+}
+
+.card{
+  background:#1a1a1a;
+  padding:30px;
+  border-radius:10px;
+  display:inline-block;
+}
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+  GENZ <span style="color:orange;">FOOD</span>
+</div>
+
+<div class="container">
+  <div class="card">
+    <h2 id="name"></h2>
+    <p id="email"></p>
+  </div>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAY3G265zTP5Qpf9EoGlGy2sSrVYGI4LGk",
+  authDomain: "genzfood2-96e43.firebaseapp.com",
+  projectId: "genzfood2-96e43",
+  storageBucket: "genzfood2-96e43.firebasestorage.app",
+  messagingSenderId: "410241064931",
+  appId: "1:410241064931:web:ab1454346c3d28bba30ad6"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+onAuthStateChanged(auth, async (user) => {
+
+  if (user) {
+
+    const docRef = doc(db, "users", user.uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      document.getElementById("name").innerText = "Name: " + data.name;
+      document.getElementById("email").innerText = "Email: " + data.email;
+    }
+
+  } else {
+    window.location.href = "login.html";
+  }
+
+});
+
+</script>
+
+</body>
+</html>
